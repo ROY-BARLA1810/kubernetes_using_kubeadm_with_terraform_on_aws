@@ -1,4 +1,4 @@
-# Launchg an instance
+# Launch master instance
 resource "aws_instance" "k8s_master" {
   ami           = var.ami["master"]
   instance_type = var.instance_type["master"]
@@ -28,7 +28,7 @@ resource "aws_instance" "k8s_master" {
 
 }
 
-# Launchg an instance
+# Launch worker instance(s)
 resource "aws_instance" "k8s_worker" {
   count         = var.worker_instance_count
   ami           = var.ami["worker"]
