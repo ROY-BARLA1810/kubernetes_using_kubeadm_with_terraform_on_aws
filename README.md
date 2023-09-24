@@ -16,7 +16,7 @@ NODENAME           Ready    <none>          8s      v1.28.2
 ```
 
 ### Known limitations
-NA
+Joining the worker nodes manually
 
 ### References
 - https://github.com/kunchalavikram1427/YouTube_Series/blob/main/Kubernetes/ClusterSetup/Kubernetes_v1.28_on_aws_with_containerd.md
