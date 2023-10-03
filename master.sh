@@ -1,8 +1,13 @@
 #!/bin/bash
 set -e
+sudo su
+
+# Set hostname
+echo "-------------Setting hostname-------------"
+hostnamectl set-hostname $1
+
 # Disable swap
 echo "-------------Disabling swap-------------"
-sudo su
 swapoff -a
 sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 

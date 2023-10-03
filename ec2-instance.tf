@@ -7,7 +7,7 @@ resource "aws_instance" "k8s_master" {
   }
   key_name        = aws_key_pair.k8s.key_name
   security_groups = ["k8s_master_sg"]
-  user_data = file("master.sh")
+  # user_data = file("master.sh")
 
   connection {
     type        = "ssh"
@@ -16,13 +16,13 @@ resource "aws_instance" "k8s_master" {
     private_key = file("k8s-key")
   }
   provisioner "file" {
-    source      = "./set-hostname.sh"
-    destination = "/home/ubuntu/set-hostname.sh"
+    source      = "./master.sh"
+    destination = "/home/ubuntu/master.sh"
   }
   provisioner "remote-exec" {
     inline = [
-      "chmod +x /home/ubuntu/set-hostname.sh",
-      "sudo sh /home/ubuntu/set-hostname.sh k8s-master"
+      "chmod +x /home/ubuntu/master.sh",
+      "sudo sh /home/ubuntu/master.sh k8s-master"
     ]
   }
 
@@ -38,7 +38,7 @@ resource "aws_instance" "k8s_worker" {
   }
   key_name        = aws_key_pair.k8s.key_name
   security_groups = ["k8s_worker_sg"]
-  user_data = file("worker.sh")
+  # user_data = file("worker.sh")
 
   connection {
     type        = "ssh"
@@ -47,13 +47,13 @@ resource "aws_instance" "k8s_worker" {
     private_key = file("k8s-key")
   }
   provisioner "file" {
-    source      = "./set-hostname.sh"
-    destination = "/home/ubuntu/set-hostname.sh"
+    source      = "./worker.sh"
+    destination = "/home/ubuntu/worker.sh"
   }
   provisioner "remote-exec" {
     inline = [
-      "chmod +x /home/ubuntu/set-hostname.sh",
-      "sudo sh /home/ubuntu/set-hostname.sh k8s-worker-${count.index}"
+      "chmod +x /home/ubuntu/worker.sh",
+      "sudo sh /home/ubuntu/worker.sh k8s-worker-${count.index}"
     ]
   }
 
