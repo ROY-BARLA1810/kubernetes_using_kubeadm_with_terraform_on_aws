@@ -1,8 +1,12 @@
 #!/bin/bash
 set -e
+
+# Set hostname
+echo "-------------Setting hostname-------------"
+hostnamectl set-hostname $1
+
 # Disable swap
 echo "-------------Disabling swap-------------"
-sudo su
 swapoff -a
 sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
@@ -94,3 +98,7 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 
 echo "-------------Deploying Weavenet Pod Networking-------------"
 kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+
+echo "-------------Creating file with join command-------------"
+echo `kubeadm token create --print-join-command` > ./join-command.sh
+ 

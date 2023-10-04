@@ -1,0 +1,9 @@
+- hosts: all
+  name: fetch-join-token-file
+  gather_facts: false
+  tasks:
+  - name: Fetching join command file
+    fetch:
+      src: /home/ubuntu/join-command.sh
+      dest: ./join-command.sh
+      flat: yes
