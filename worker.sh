@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-sudo su
 
 # Set hostname
 echo "-------------Setting hostname-------------"

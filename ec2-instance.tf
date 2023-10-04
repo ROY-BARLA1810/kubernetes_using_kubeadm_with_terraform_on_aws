@@ -25,6 +25,16 @@ resource "aws_instance" "k8s_master" {
       "sudo sh /home/ubuntu/master.sh k8s-master"
     ]
   }
+  provisioner "local-exec" {
+    command = "echo [master] >> ./hosts" 
+    on_failure = continue
+  }
+  provisioner "local-exec" {
+    command = "echo ${self.public_ip} >> ./hosts" 
+  }
+  provisioner "local-exec" {
+    command = "ansible-playbook -i '${self.public_ip},' playbook.yaml"
+  }
 
 }
 
@@ -39,7 +49,7 @@ resource "aws_instance" "k8s_worker" {
   key_name        = aws_key_pair.k8s.key_name
   security_groups = ["k8s_worker_sg"]
   # user_data = file("worker.sh")
-
+  depends_on = [ aws_instance.k8s_master ]
   connection {
     type        = "ssh"
     user        = "ubuntu"
@@ -50,11 +60,27 @@ resource "aws_instance" "k8s_worker" {
     source      = "./worker.sh"
     destination = "/home/ubuntu/worker.sh"
   }
+  provisioner "file" {
+    source      = "./join-command.sh"
+    destination = "/home/ubuntu/join-command.sh"
+  }
   provisioner "remote-exec" {
     inline = [
-      "chmod +x /home/ubuntu/worker.sh",
-      "sudo sh /home/ubuntu/worker.sh k8s-worker-${count.index}"
+      "chmod +x /home/ubuntu/worker.sh /home/ubuntu/join-command.sh",
+      "sudo sh /home/ubuntu/worker.sh k8s-worker-${count.index}",
+      "sudo sh /home/ubuntu/join-command.sh"
     ]
   }
-
 }
+
+# resource "null_resource" "k8s_worker_ips" {
+#   count = length(aws_instance.k8s_worker)
+#   depends_on = [ aws_instance.k8s_master, aws_instance.k8s_worker ]
+#   provisioner "local-exec" {
+#     command = "echo [workers] >> ./hosts" 
+#     on_failure = continue
+#   }
+#   provisioner "local-exec" {
+#     command = "echo ${element(aws_instance.k8s_worker[*].public_ip, count.index)} >> hosts"
+#   }
+# }
